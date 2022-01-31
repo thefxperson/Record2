@@ -1,2 +1,2 @@
-# Record2
-Application to record/"scrobble" music played on a turntable to LastFM
+# Record<sup>2</sup>
+Application to record your records: "scrobbles" music played on a turntable to LastFM.

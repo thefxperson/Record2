@@ -1,0 +1,26 @@
+{
+  "devDependencies": {
+    "electron": "^16.0.8"
+  },
+  "name": "record2",
+  "description": "Application to record your records: \"scrobbles\" music played on a turntable to LastFM.",
+  "version": "0.0.1",
+  "main": "main.js",
+  "dependencies": {
+    "electron": "^16.0.8"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thefxperson/Record2.git"
+  },
+  "author": "Parker Carlson",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/thefxperson/Record2/issues"
+  },
+  "homepage": "https://github.com/thefxperson/Record2#readme"
+}
