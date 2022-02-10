@@ -5,7 +5,7 @@ if __name__ == '__main__':
     # create ZMQ socket
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    socket.bind("tcp://127.0.0.1:3000")
+    socket.bind("tcp://127.0.0.1:3001")
 
     # listen for messages
     #while True:

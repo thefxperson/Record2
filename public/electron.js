@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
+const isDev = require('electron-is-dev')
 const zmq = require('zeromq')
 const {spawn} = require("child_process")
 
@@ -10,15 +11,21 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      nodeIntegration: true,
     }
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  mainWindow.loadURL(
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, '../build/index.html')}`
+  );
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  if(isDev){
+    mainWindow.webContents.openDevTools({mode: "detach"})
+  }
 }
 
 // This method will be called when Electron has finished
@@ -51,8 +58,8 @@ app.on('window-all-closed', function () {
 async function run_zmq() {
   const sock = new zmq.Request
 
-  sock.connect("tcp://127.0.0.1:3000")
-  console.log("Client bound to port 3000.")
+  sock.connect("tcp://127.0.0.1:3001")
+  console.log("Client bound to port 3001.")
 
   // send message
   await sock.send("Hello")
@@ -65,7 +72,7 @@ async function run_zmq() {
 var python_server = null
 // function to spawn the main python process
 function spawn_python_server(){
-  let main_path = path.join(__dirname, "backend", "main.py")
+  let main_path = path.join(__dirname, "../backend", "main.py")
   python_server = spawn("python", [main_path])
   if(python_server != null){
     console.log("Python server spawned.")
