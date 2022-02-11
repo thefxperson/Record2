@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App song="Devil in a New Dress" artist="Kanye West" art="https://lastfm.freetls.fastly.net/i/u/770x0/8a071c4b073625018de5f0ac58727511.jpg#8a071c4b073625018de5f0ac58727511" />
   </React.StrictMode>,
   document.getElementById('root')
 );

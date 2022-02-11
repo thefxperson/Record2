@@ -15,6 +15,9 @@ function createWindow () {
     }
   })
 
+  // hide the menu options (Files, Edit, ect)
+  mainWindow.removeMenu()
+
   // and load the index.html of the app.
   mainWindow.loadURL(
     isDev
@@ -56,13 +59,17 @@ app.on('window-all-closed', function () {
 
 // function to create ZMQ client socket.
 async function run_zmq() {
-  const sock = new zmq.Request
+  const sock = new zmq.Pair
 
   sock.connect("tcp://127.0.0.1:3001")
   console.log("Client bound to port 3001.")
 
   // send message
-  await sock.send("Hello")
+  data = {
+    "type": "POST",
+    "data": "Hello"
+  }
+  await sock.send(JSON.stringify(data))
 
   // print recieved reply
   const [msg] = await sock.receive()
