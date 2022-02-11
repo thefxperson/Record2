@@ -1,13 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import NowPlaying from './NowPlaying';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App song="Devil in a New Dress" artist="Kanye West" art="https://lastfm.freetls.fastly.net/i/u/770x0/8a071c4b073625018de5f0ac58727511.jpg#8a071c4b073625018de5f0ac58727511" />
-  </React.StrictMode>,
+  <NowPlaying />,
   document.getElementById('root')
 );
 

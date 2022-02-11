@@ -3,6 +3,9 @@
 # API Keys
 secrets.txt
 
+# Misc testing
+*.mp3
+
 # dependencies
 /node_modules
 /.pnp

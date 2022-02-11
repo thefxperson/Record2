@@ -1,0 +1,36 @@
+.NowPlaying {
+  /* center div in page */
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  width: min(50vw, 50vh);
+
+  /* center content in div */
+
+
+  /* style */
+  text-align: left;
+  color: white;
+}
+
+.NowPlaying-art {
+  width: 100%;
+  pointer-events: none;
+}
+
+.NowPlaying h3 {
+  margin: 0px;
+  margin-top: max(5px, 5%);
+  font-size: calc(12px + min(2.2vw, 2.2vh));
+}
+
+.NowPlaying h4 {
+  /* font style */
+  font-weight: normal;
+  font-size: calc(10px + min(1.2vw, 1.2vh));
+  color: #bbb;
+
+  /* positioning */
+  margin: 0px;
+  padding-top: 5px;
+}

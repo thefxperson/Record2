@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {ipcMain, app, BrowserWindow} = require('electron')
 const path = require('path')
 const isDev = require('electron-is-dev')
 const zmq = require('zeromq')
@@ -12,6 +12,7 @@ function createWindow () {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false
     }
   })
 
@@ -29,15 +30,17 @@ function createWindow () {
   if(isDev){
     mainWindow.webContents.openDevTools({mode: "detach"})
   }
+
+  return mainWindow
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow()
+  mainWindow = createWindow()
 
-  run_zmq()
+  run_zmq(mainWindow)
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -58,7 +61,7 @@ app.on('window-all-closed', function () {
 
 
 // function to create ZMQ client socket.
-async function run_zmq() {
+async function run_zmq(mainWindow) {
   const sock = new zmq.Pair
 
   sock.connect("tcp://127.0.0.1:3001")
@@ -74,6 +77,18 @@ async function run_zmq() {
   // print recieved reply
   const [msg] = await sock.receive()
   console.log("Client recieved: " + msg)
+
+  while (true) {
+    // listen to socket
+    const [msg] = await sock.receive()
+    var msgObj = JSON.parse(msg.toString())
+    if(msgObj.fun == "updateSong"){
+      // send event
+      mainWindow.webContents.send("newSong",
+        {newSong: msgObj.data.song, newArtist: msgObj.data.artist, newArt: msgObj.data.art}
+      )
+    }
+  }
 }
 
 var python_server = null

@@ -33,6 +33,23 @@ def handle_post(message):
 def handle_get(message):
     pass
 
+song1 = {
+    "song": "Devil in a New Dress",
+    "artist": "Kanye West, Rick Ross",
+    "art": "https://lastfm.freetls.fastly.net/i/u/770x0/8a071c4b073625018de5f0ac58727511.jpg#8a071c4b073625018de5f0ac58727511",
+}
+song2 = {
+    "song": "Unfuckwittable",
+    "artist": "Kid Cudi",
+    "art": "https://upload.wikimedia.org/wikipedia/en/c/c5/Kid-cudi-indicud-cover.jpg",
+}
+song3 = {
+    "song": "Skinny Love",
+    "artist": "Bon Iver",
+    "art": "https://upload.wikimedia.org/wikipedia/en/e/e0/Bon_iver_album_cover.jpg",
+}
+songs = [song1, song2, song3]
+
 if __name__ == '__main__':
     # create ZMQ socket
     context = zmq.Context()
@@ -52,3 +69,15 @@ if __name__ == '__main__':
     }
 
     socket.send(json.dumps(data).encode("ascii"))
+
+    time.sleep(3)
+
+    # test comms
+    for song in songs:
+        data = {
+            "fun": "updateSong",
+            "data": song
+        }
+
+        socket.send(json.dumps(data).encode("ascii"))
+        time.sleep(5)
