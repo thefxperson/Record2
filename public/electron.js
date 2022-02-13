@@ -4,6 +4,7 @@ const path = require('path')
 const isDev = require('electron-is-dev')
 const zmq = require('zeromq')
 const {spawn} = require("child_process")
+var sock;
 
 function createWindow () {
   // Create the browser window.
@@ -62,7 +63,7 @@ app.on('window-all-closed', function () {
 
 // function to create ZMQ client socket.
 async function run_zmq(mainWindow) {
-  const sock = new zmq.Pair
+  sock = new zmq.Pair
 
   sock.connect("tcp://127.0.0.1:3001")
   console.log("Client bound to port 3001.")
@@ -112,6 +113,10 @@ function kill_python_server(){
   python_server.kill()
   python_server = null
 }
+
+ipcMain.on("scrobbleSong", (event, args) => {
+  sock.send(JSON.stringify(args))
+})
 
 app.on("ready", spawn_python_server)
 

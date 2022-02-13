@@ -1,0 +1,18 @@
+.FileInput {
+  /* center div in page */
+  bottom: 20px; left: 30px;
+  position: absolute;
+  /*width: 200px;
+  height: 50px;*/
+
+  /* center content in div */
+
+
+  /* style */
+  text-align: left;
+  color: white;
+}
+
+.FileInput input {
+  margin: 10px;
+}

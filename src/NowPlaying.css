@@ -18,6 +18,64 @@
   pointer-events: none;
 }
 
+.NowPlaying-BlankArt {
+  height: 0px;
+  width: 100%;
+  padding-bottom: 100%;
+  display: inline-block;
+  pointer-events: none;
+  position: relative;
+}
+
+.NowPlaying-Square {
+  position: absolute;
+  top: 0px; left: 0px;
+  background: #32353B;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+}
+
+.NowPlaying-Circle1 {
+  position: absolute;
+  top: 15%; left: 15%;
+  width: 70%;
+  height: 70%;
+  background: #66696F;
+  border-radius: 70%;
+  z-index: 5;
+}
+
+.NowPlaying-Circle2 {
+  position: absolute;
+  top: 32.5%; left: 32.5%;
+  width: 35%;
+  height: 35%;
+  background: #32353B;
+  border-radius: 100%;
+  z-index: 6;
+}
+
+.NowPlaying-Circle3 {
+  position: absolute;
+  top: 37%; left: 37%;
+  width: 26%;
+  height: 26%;
+  background: #66696F;
+  border-radius: 100%;
+  z-index: 7;
+}
+
+.NowPlaying-Circle4 {
+  position: absolute;
+  top: 48%; left:48%;
+  width: 4%;
+  height: 4%;
+  background: #32353B;
+  border-radius: 100%;
+  z-index: 8;
+}
+
 .NowPlaying h3 {
   margin: 0px;
   margin-top: max(5px, 5%);

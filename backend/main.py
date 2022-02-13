@@ -1,12 +1,46 @@
 import time
 import zmq
 import json
+import os
+from fingerprint import acoustid_search
+from lastfm import lastfm_art, lastfm_scrobble
+
+
+def scrobbleSong(data):
+    # load api keys
+    #print(os.getcwd())
+    f_keys = open("./secrets.json", "r")
+    text = f_keys.readline()
+    keys = json.loads(text)
+    f_keys.close()
+
+    # first, make a AcoustID API call:
+    best_result = acoustid_search(keys["ACOUSTID_API_KEY"], data["path"])
+    print(best_result, flush=True)
+
+    # no matches
+    if best_result["score"] == 0.0:
+        return (False, None)
+
+    # then, submit a scrobble request to lastfm
+    lastfm_scrobble(keys["LASTFM_API_KEY"], keys["LASTFM_API_SECRET"],
+                    keys["LASTFM_USERNAME"], keys["LASTFM_PASS_HASH"],
+                    best_result["title"], best_result["artist"],
+                    start_time=time.time())
+
+    art_url = lastfm_art(keys["LASTFM_API_KEY"], keys["LASTFM_API_SECRET"],
+                         best_result["title"], best_result["artist"])
+
+    # finally, return a payload to update GUI
+    return (True, {
+                   "song": best_result["title"],
+                   "artist": best_result["artist"],
+                   "art": art_url})
 
 
 # API Specification
 # To initiate a remote function call, send JSON message:
 # remote_call = {
-#   "type": "CALL",
 #   "function": "function_name",
 #   "args": [arg1, arg2, ...]
 # }
@@ -81,3 +115,19 @@ if __name__ == '__main__':
 
         socket.send(json.dumps(data).encode("ascii"))
         time.sleep(5)
+
+    # infinite loop to listen for RPCs
+    # later refactor into a proper async model but idgaf rn
+    while True:
+        # listen for a new message
+        message = socket.recv()
+        decoded = json.loads(message)
+        print(decoded, flush=True)
+
+        # call function specified in message
+        if(decoded["fun"] == "scrobbleSong"):
+            reply = scrobbleSong(decoded["data"])
+            if reply[0]:    # if successful API lookup
+                print(reply[1])
+                socket.send(json.dumps({"fun": "updateSong", "data": reply[1]}).encode("ascii"))
+            continue

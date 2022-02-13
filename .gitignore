@@ -2,9 +2,13 @@
 
 # API Keys
 secrets.txt
+secrets.json
 
 # Misc testing
 *.mp3
+
+# Python
+*.pyc
 
 # dependencies
 /node_modules

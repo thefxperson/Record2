@@ -35,7 +35,7 @@ def print_album(album):
 
 # TODO: write rate limiting decorator or use requests
 # create session that sends user agent with every request
-session = requests.Session()
+"""session = requests.Session()
 session.headers.update({"User-Agent": "Record2/0.0.1"})
 
 user = ["USER1", "USER2"]
@@ -69,4 +69,4 @@ while True:
 
 
 for album in albums:
-    print_album(album)
+    print_album(album)"""

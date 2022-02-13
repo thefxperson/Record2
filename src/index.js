@@ -2,10 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import NowPlaying from './NowPlaying';
+import FileInput from './FileInput';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <NowPlaying />,
+  <div>
+    <NowPlaying />
+    <FileInput />
+  </div>,
   document.getElementById('root')
 );
 
