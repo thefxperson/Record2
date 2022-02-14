@@ -1,13 +1,10 @@
 import pylast
 import time
 
-# API KEYS lmao don't push to github
-"""API_KEY = "KEY"
-API_SECRET = "SECRET"
-
-# my info lmao also don't push
-username = "USERNAME"
-password_hash = pylast.md5("PASSWORD")"""
+# Override classes from PyLast to add MBID compatibility to track/album requests
+class MyLastFMNetwork(pylast.LastFMNetwork):
+    def __init__():
+        pass
 
 def lastfm_scrobble(api_key, api_secret, username, password_hash, song, artist, start_time=time.time()):
     lfm = pylast.LastFMNetwork(

@@ -1,6 +1,5 @@
 import './NowPlaying.css';
 import React from 'react'
-import placeholder from "./placeholder.png"
 const {ipcRenderer} = window.require("electron")
 
 class NowPlaying extends React.Component{

@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import NowPlaying from './NowPlaying';
 import FileInput from './FileInput';
+import Lyrics from './Lyrics';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <div>
     <NowPlaying />
     <FileInput />
+    <Lyrics />
   </div>,
   document.getElementById('root')
 );

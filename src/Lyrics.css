@@ -1,0 +1,28 @@
+.Lyrics {
+  bottom: 30px; right: 30px;
+  position: absolute;
+
+  /* style */
+  text-align: center;
+  color: white;
+}
+
+.LyricsPane {
+  /* center div in page */
+  top: 30%; left: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.Lyrics p {
+  margin: 0px;
+  text-align: left;
+}
+
+.LyricsVerse {
+  margin-bottom: 20px;
+}

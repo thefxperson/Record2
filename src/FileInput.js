@@ -9,10 +9,6 @@ class FileInput extends React.Component{
     this.sendFilePath = this.sendFilePath.bind(this)
   }
 
-  componentDidMount(){
-    // add event listener
-  }
-
   sendFilePath(){
     // send info to python
     console.log(this.path.value)
@@ -24,8 +20,8 @@ class FileInput extends React.Component{
     return (
       <div className="FileInput">
           <p>
-            <input type="text" id="FileInput-Box" ref={(c) => this.path = c} />
-            <button type="button" onClick={this.sendFilePath} id="FileInput-Button">Scrobble</button>
+            <input type="text" ref={(c) => this.path = c} />
+            <button type="button" onClick={this.sendFilePath}>Scrobble</button>
           </p>
       </div>
     );
