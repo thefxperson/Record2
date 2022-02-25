@@ -1,0 +1,22 @@
+.PlayBar {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.PctBar {
+  width: 80%;
+  margin: auto 20px;
+  height: 0.5em;
+  background: #32353B;
+  border-radius: 10px;
+}
+
+.PctBar > .ProgressBar {
+  position: absolute;
+  width: 100px;
+  height: 0.5em;
+  background-color: white;
+  border-radius: 10px;
+  z-index: 2;
+}

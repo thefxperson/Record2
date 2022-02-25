@@ -1,5 +1,6 @@
 import './NowPlaying.css';
 import React from 'react'
+import PlayBar from "./PlayBar"
 const {ipcRenderer} = window.require("electron")
 
 class NowPlaying extends React.Component{
@@ -9,7 +10,9 @@ class NowPlaying extends React.Component{
     this.state = {
       art: "None",
       song: "Play a song to scrobble...",
-      artist: "..."
+      artist: "...",
+      currTime: "0:00",
+      maxTime: "3:59"
     }
 
     //bind event listener to class
@@ -55,6 +58,7 @@ class NowPlaying extends React.Component{
           {album_art}
           <h3>{this.state.song}</h3>
           <h4>{this.state.artist}</h4>
+          <PlayBar currTime={this.state.currTime} maxTime={this.state.maxTime} />
       </div>
     );
   }
