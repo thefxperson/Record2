@@ -25,3 +25,28 @@ def acoustid_search(api_key, file_path):
             best_result["score"] = score
 
     return best_result
+
+
+def my_acoustid_search(api_key, file_path, verbose=True):
+    best_result = {}
+    best_result["score"] = 0.0
+    results = acoustid.match(api_key, file_path, parse=False)
+
+    # check query status
+    if results["status"] != "ok":
+        if verbose:
+            print("ERROR: no acoustid results")
+        return best_result
+
+    # parse query
+    for result in results["results"]:
+        if result["score"] > best_result["score"]:
+            best_result["title"] = result["recordings"][0]["title"]
+            artists = ""
+            for artist in result["recordings"][0]["artists"]:
+                artists += artist["name"] + artist["joinphrase"]
+            best_result["artist"] = artists
+            best_result["id"] = result["id"]
+            best_result["duration"] = result["recordings"][0]["duration"]
+
+    return best_result

@@ -11,8 +11,8 @@ class NowPlaying extends React.Component{
       art: "None",
       song: "Play a song to scrobble...",
       artist: "...",
-      currTime: "0:00",
-      maxTime: "3:59"
+      currTime: 0,
+      duration: 0
     }
 
     //bind event listener to class
@@ -31,7 +31,8 @@ class NowPlaying extends React.Component{
     this.setState({
       art: e.newArt,
       song: e.newSong,
-      artist: e.newArtist
+      artist: e.newArtist,
+      duration: e.newDuration
     })
   }
 
@@ -58,7 +59,7 @@ class NowPlaying extends React.Component{
           {album_art}
           <h3>{this.state.song}</h3>
           <h4>{this.state.artist}</h4>
-          <PlayBar currTime={this.state.currTime} maxTime={this.state.maxTime} />
+          <PlayBar song={this.state.song} maxTime={this.state.duration} />
       </div>
     );
   }
