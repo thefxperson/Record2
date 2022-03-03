@@ -42,9 +42,13 @@ def my_acoustid_search(api_key, file_path, verbose=True):
     for result in results["results"]:
         if result["score"] > best_result["score"]:
             best_result["title"] = result["recordings"][0]["title"]
+            best_result["score"] = result["score"]
             artists = ""
             for artist in result["recordings"][0]["artists"]:
-                artists += artist["name"] + artist["joinphrase"]
+                artists += artist["name"]
+                if "joinphrase" in artist:
+                    artists += artist["joinphrase"]
+
             best_result["artist"] = artists
             best_result["id"] = result["id"]
             best_result["duration"] = result["recordings"][0]["duration"]

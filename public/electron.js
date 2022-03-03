@@ -86,9 +86,8 @@ async function run_zmq(mainWindow) {
     if(msgObj.fun == "updateSong"){
       // send event
       mainWindow.webContents.send("newSong",
-        {newSong: msgObj.data.song, newArtist: msgObj.data.artist, newDuration: msgObj.data.duration, newArt: msgObj.data.art}
+        {newSong: msgObj.data.song, newArtist: msgObj.data.artist, newDuration: msgObj.data.duration, newArt: msgObj.data.art, newCurrTime: msgObj.data.currTime, newCurrPerc: msgObj.data.currPerc}
       )
-      console.log({newSong: msgObj.data.song, newArtist: msgObj.data.artist, newDuration: msgObj.data.duration, newArt: msgObj.data.art})
     }
   }
 }

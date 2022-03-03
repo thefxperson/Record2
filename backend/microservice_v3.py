@@ -59,12 +59,13 @@ def percent_played(filepath, seconds_played):
     print(tot_duration)
 
     # Find percentage of song played and print.
+    raw_pct = (seconds_played/length)
     played_percent = ((seconds_played/length) * 100)
     percentage = "{:.1f}".format(played_percent) + "%"
     perc_msg = "\nYou have played " + "{:.1f}".format(played_percent) + "% of the song!"
     print(perc_msg)
     with open('percentage-played.txt', 'w+') as wf:
-        wf.write(percentage)
+        wf.write(str(raw_pct))
         # You can comment this out if not necessary for txt file.
         wf.write(str(perc_msg))
         wf.close()
@@ -76,21 +77,26 @@ def read_mp3_from_txt():
     Function that waits for the params.txt file to be created in the same directory and then
     calls the other functions to return a txt file.
     """
-    curr_dir = os.getcwd()
-    while wait_for_file(curr_dir, 'params.txt') is not True:
-        wait_for_file(curr_dir, 'params.txt')
+    #curr_dir = os.getcwd()
+    #while wait_for_file(curr_dir, 'params.txt') is not True:
+    #    wait_for_file(curr_dir, 'params.txt')
+    try:
+        f = open('params.txt')
+    except:
+        pass
+    else:
+        lines = [line.rstrip() for line in f]
+        f.close()
+        filepath = lines[0]
+        seconds_played = int(lines[1])
 
-    with open('params.txt') as file:
-        lines = [line.rstrip() for line in file]
-
-    filepath = lines[0]
-    seconds_played = int(lines[1])
-
-    if filepath == "Stop":
-        exit(0)
-    percent_played(filepath, seconds_played)
+        if filepath == "Stop":
+            exit(0)
+        percent_played(filepath, seconds_played)
 
 
 # Comment this out if you don't need the prompts
 if __name__ == '__main__':
-    read_mp3_from_txt()
+    while True:
+        read_mp3_from_txt()
+        time.sleep(0.5)
