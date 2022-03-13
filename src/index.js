@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import NowPlaying from './NowPlaying';
 import FileInput from './FileInput';
+import MicScrobble from './MicScrobble';
 import Lyrics from './Lyrics';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <div>
     <NowPlaying />
-    <FileInput />
-    <Lyrics />
+    <MicScrobble />
   </div>,
   document.getElementById('root')
 );
