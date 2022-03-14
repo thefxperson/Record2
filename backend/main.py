@@ -2,33 +2,36 @@ import time
 import zmq
 import json
 import os
-from fingerprint import acoustid_search, my_acoustid_search
-from lastfm import lastfm_art, lastfm_scrobble
+from fingerprint import acoustidSearch, myAcoustidSearch, myAcoustidSearchRec
+from lastfm import lastfmArt, lastfmScrobble
+import asyncio
 
 
-def scrobbleSong(data, start_time, track = False):
+def scrobbleSong(data, start_time, track = False, record = False):
     # load api keys
-    #print(os.getcwd())
     f_keys = open("./secrets.json", "r")
     text = f_keys.readline()
     keys = json.loads(text)
     f_keys.close()
 
     # first, make a AcoustID API call:
-    best_result = my_acoustid_search(keys["ACOUSTID_API_KEY"], data["path"])
+    if record:
+        best_result = asyncio.run(myAcoustidSearchRec(keys["ACOUSTID_API_KEY"]))
+    else:
+        best_result = myAcoustidSearch(keys["ACOUSTID_API_KEY"], data["path"])
 
     # no matches
     if best_result["score"] == 0.0:
-        return (False, None)
+        return (False, {"msg": "No matching songs.", "title": "Scrobble Error"})
 
     # then, submit a scrobble request to lastfm
     if track:
-        lastfm_scrobble(keys["LASTFM_API_KEY"], keys["LASTFM_API_SECRET"],
+        lastfmScrobble(keys["LASTFM_API_KEY"], keys["LASTFM_API_SECRET"],
                         keys["LASTFM_USERNAME"], keys["LASTFM_PASS_HASH"],
                         best_result["title"], best_result["artist"],
                         start_time=start_time)
 
-    art_url = lastfm_art(keys["LASTFM_API_KEY"], keys["LASTFM_API_SECRET"],
+    art_url = lastfmArt(keys["LASTFM_API_KEY"], keys["LASTFM_API_SECRET"],
                          best_result["title"], best_result["artist"])
 
     # finally, return a payload to update GUI
@@ -40,14 +43,13 @@ def scrobbleSong(data, start_time, track = False):
 
 
 def communicateWithService(filepath, curr_time):
-    print(f'update: {os.getcwd()}')
-    f = open(f"./backend/params.txt", "w")
+    f = open(f"./backend/params.txt", "w")      # writs args to file
     f.write(filepath)
     f.write('\n')
     f.write(str(curr_time))
     f.close()
-    time.sleep(1)
-    f = open("./backend/percentage-played.txt", "r")
+    time.sleep(1)                               # allow service to process response
+    f = open("./backend/percentage-played.txt", "r")    # read response from service
     line = f.readline()
     f.close()
     os.remove("./backend/params.txt")
@@ -68,56 +70,7 @@ def scrobbleSongServiceHandler(decoded, socket):
             socket.send(json.dumps({"fun": "updateSong", "data": reply[1]}).encode("ascii"))
             time.sleep(0.8)
 
-    # now communicate with service
-# API Specification
-# To initiate a remote function call, send JSON message:
-# remote_call = {
-#   "function": "function_name",
-#   "args": [arg1, arg2, ...]
-# }
-#
-# If you recieve a message of type CALL,
-#   1. Call the function passed in the JSON object
-#   2. Pass the args in the JSON object
-#   3. Return tuple (REPLY, DATA)
-#
-# REPLYING TO MESSAGES
-def handle_request(message):
-    # decode byte-string JSON to dict
-    decoded = json.loads(message)
 
-    # check if request is GET or POST
-    if decoded["type"] == "CALL":
-        handle_get(message["data"])
-    elif decoded["type"] == "RETURN":
-        handle_post(message["data"])
-
-def handle_post(message):
-    pass
-
-def handle_get(message):
-    pass
-
-song1 = {
-    "song": "Devil in a New Dress",
-    "artist": "Kanye West, Rick Ross",
-    "duration": 352,
-    "art": "https://lastfm.freetls.fastly.net/i/u/770x0/8a071c4b073625018de5f0ac58727511.jpg#8a071c4b073625018de5f0ac58727511",
-}
-song2 = {
-    "song": "Unfuckwittable",
-    "artist": "Kid Cudi",
-    "duration": 276,
-    "art": "https://upload.wikimedia.org/wikipedia/en/c/c5/Kid-cudi-indicud-cover.jpg",
-}
-song3 = {
-    "song": "Skinny Love",
-    "artist": "Bon Iver",
-    "duration": 239,
-    "art": "https://upload.wikimedia.org/wikipedia/en/e/e0/Bon_iver_album_cover.jpg",
-}
-#songs = [song1, song2, song3]
-songs = [song3]
 
 if __name__ == '__main__':
     # create ZMQ socket
@@ -125,34 +78,8 @@ if __name__ == '__main__':
     socket = context.socket(zmq.PAIR)
     socket.bind("tcp://127.0.0.1:3001")
 
-    # listen for messages
-    #while True:
-    message = socket.recv()
-    decoded = json.loads(message)
-    print(f"Server recieved request: {decoded}", flush=True)
-
-    time.sleep(1)
-    data = {
-        "type": "POST",
-        "data": "World"
-    }
-
-    socket.send(json.dumps(data).encode("ascii"))
-
-    time.sleep(3)
-
-    # test comms
-    for song in songs:
-        data = {
-            "fun": "updateSong",
-            "data": song
-        }
-
-        socket.send(json.dumps(data).encode("ascii"))
-        time.sleep(5)
-
     # infinite loop to listen for RPCs
-    # later refactor into a proper async model but idgaf rn
+    # later refactor into a proper async model
     while True:
         # listen for a new message
         message = socket.recv()
@@ -162,23 +89,17 @@ if __name__ == '__main__':
         # call function specified in message
         if(decoded["fun"] == "scrobbleSong"):
             start_time = time.time()
-            reply = scrobbleSong(decoded["data"], start_time, track=False)
-            print(f"REPLY: {reply}", flush=True)
+            reply = scrobbleSong(decoded["data"], start_time, track=True)
             if reply[0]:    # if successful API lookup
-                while True:
-                    curr = int(time.time() - start_time)
-                    perc = communicateWithService(decoded["data"]["path"], curr)
-                    # update time and percent
-                    reply[1]["currTime"] = curr
-                    reply[1]["currPerc"] = perc[:-1]
-                    reply[1]["art"] = "https://lastfm.freetls.fastly.net/i/u/770x0/8a071c4b073625018de5f0ac58727511.jpg#8a071c4b073625018de5f0ac58727511"
-
-                    print(reply[1], flush=True)
-
-                    socket.send(json.dumps({"fun": "updateSong", "data": reply[1]}).encode("ascii"))
-                    time.sleep(0.6)
-            '''reply = scrobbleSongService(decoded["data"], time.time())
-            if reply[0]:    # if successful API lookup
-                print(reply[1])
                 socket.send(json.dumps({"fun": "updateSong", "data": reply[1]}).encode("ascii"))
-            continue'''
+            else:
+                socket.send(json.dumps({"fun": "errorMsg", "data": reply[1]}).encode("ascii"))
+            continue
+        elif(decoded["fun"] == "scrobbleMic"):
+            start_time = time.time()
+            # record for 5 sec and reply
+            reply = scrobbleSong(None, start_time, track=False, record=True)
+            if reply[0]:
+                socket.send(json.dumps({"fun": "updateSong", "data": reply[1]}).encode("ascii"))
+            else:
+                socket.send(json.dumps({"fun": "errorMsg", "data": reply[1]}).encode("ascii"))

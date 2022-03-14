@@ -75,7 +75,7 @@ class PlayBar extends React.Component{
     var min = Math.floor(secs / 60);
     var rem = secs % 60;
     if(rem < 10){
-      rem = '0' + String(rem)   // prob bad style to double cast but idgaf
+      rem = '0' + String(rem)   // prob bad style to double cast but works
     }
     return String(min) + ':' + String(rem)
   }

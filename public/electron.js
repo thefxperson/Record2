@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {ipcMain, app, BrowserWindow} = require('electron')
+const {dialog, ipcMain, app, BrowserWindow} = require('electron')
 const path = require('path')
 const isDev = require('electron-is-dev')
 const zmq = require('zeromq')
@@ -41,7 +41,7 @@ function createWindow () {
 app.whenReady().then(() => {
   mainWindow = createWindow()
 
-  run_zmq(mainWindow)
+  runZmq(mainWindow)
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -57,44 +57,35 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-
 // function to create ZMQ client socket.
-async function run_zmq(mainWindow) {
+async function runZmq(mainWindow) {
   sock = new zmq.Pair
 
   sock.connect("tcp://127.0.0.1:3001")
   console.log("Client bound to port 3001.")
 
-  // send message
-  data = {
-    "type": "POST",
-    "data": "Hello"
-  }
-  await sock.send(JSON.stringify(data))
-
-  // print recieved reply
-  const [msg] = await sock.receive()
-  console.log("Client recieved: " + msg)
-
+  // loop and listen for msgs
   while (true) {
     // listen to socket
     const [msg] = await sock.receive()
     var msgObj = JSON.parse(msg.toString())
+    console.log(msgObj)
     if(msgObj.fun == "updateSong"){
       // send event
       mainWindow.webContents.send("newSong",
         {newSong: msgObj.data.song, newArtist: msgObj.data.artist, newDuration: msgObj.data.duration, newArt: msgObj.data.art, newCurrTime: msgObj.data.currTime, newCurrPerc: msgObj.data.currPerc}
       )
     }
+    else if(msgObj.fun == "errorMsg"){
+      // display error msg
+      dialog.showMessageBox(mainWindow, {message: msgObj.data.msg, type: "info", title: msgObj.data.title})
+    }
   }
 }
 
 var python_server = null
 // function to spawn the main python process
-function spawn_python_server(){
+function spawnPythonServer(){
   let main_path = path.join(__dirname, "../backend", "main.py")
   python_server = spawn("python", [main_path])
   if(python_server != null){
@@ -109,15 +100,20 @@ function spawn_python_server(){
 }
 
 // function to kill main python process
-function kill_python_server(){
+function killPythonServer(){
   python_server.kill()
   python_server = null
 }
 
+// async IPC replies
 ipcMain.on("scrobbleSong", (event, args) => {
   sock.send(JSON.stringify(args))
 })
 
-app.on("ready", spawn_python_server)
+ipcMain.on("scrobbleMic", (event, args) => {
+  sock.send(JSON.stringify(args))
+})
 
-app.on("will-quit", kill_python_server)
+app.on("ready", spawnPythonServer)
+
+app.on("will-quit", killPythonServer)

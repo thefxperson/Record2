@@ -20,7 +20,7 @@ class FileInput extends React.Component{
     return (
       <div className="FileInput">
           <p>
-            <input type="text" ref={(c) => this.path = c} />
+            <input type="text" placeholder="Path/To/Song.mp3" ref={(c) => this.path = c} />
             <button type="button" onClick={this.sendFilePath}>Scrobble</button>
           </p>
       </div>

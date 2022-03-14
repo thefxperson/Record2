@@ -43,7 +43,7 @@ class NowPlaying extends React.Component{
   render(){
     // only render if song returns proper art
     let album_art;
-    if(this.state.art === "None"){
+    if(this.state.art === "None" || this.state.art === null){
       // default art
       album_art =
       <div className="NowPlaying-BlankArt">
@@ -57,13 +57,12 @@ class NowPlaying extends React.Component{
       album_art = <img src={this.state.art} className="NowPlaying-art" alt="album-art" />
     }
 
-    //<PlayBar song={this.state.song} maxTime={this.state.duration} />
     return (
       <div className="NowPlaying">
           {album_art}
           <h3>{this.state.song}</h3>
           <h4>{this.state.artist}</h4>
-          <PlayBarService song={this.state.song} currTime={this.state.currTime} maxTime={this.state.duration} currPerc={this.state.currPerc} />
+          <PlayBar song={this.state.song} maxTime={this.state.duration} />
       </div>
     );
   }

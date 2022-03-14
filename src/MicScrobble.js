@@ -1,4 +1,4 @@
-import './FileInput.css';
+import './MicScrobble.css';
 import React from 'react'
 const {ipcRenderer} = window.require("electron")
 
@@ -15,10 +15,8 @@ class MicScrobble extends React.Component{
 
   render(){
     return (
-      <div className="FileInput">
-          <p>
-            <button type="button" onClick={this.scrobble}>Scrobble</button>
-          </p>
+      <div className="MicScrobble">
+          <button type="button" onClick={this.scrobble}>Scrobble from Mic</button>
       </div>
     );
   }

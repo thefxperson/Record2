@@ -6,7 +6,7 @@ class MyLastFMNetwork(pylast.LastFMNetwork):
     def __init__():
         pass
 
-def lastfm_scrobble(api_key, api_secret, username, password_hash, song, artist, start_time=time.time()):
+def lastfmScrobble(api_key, api_secret, username, password_hash, song, artist, start_time=time.time()):
     lfm = pylast.LastFMNetwork(
         api_key=api_key,
         api_secret=api_secret,
@@ -17,7 +17,7 @@ def lastfm_scrobble(api_key, api_secret, username, password_hash, song, artist, 
     # this works
     lfm.scrobble(artist, song, start_time)
 
-def lastfm_art(api_key, api_secret, song, artist):
+def lastfmArt(api_key, api_secret, song, artist):
         lfm = pylast.LastFMNetwork(
             api_key=api_key,
             api_secret=api_secret

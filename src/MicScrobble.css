@@ -1,0 +1,7 @@
+.MicScrobble {
+  bottom: 30px; right: 30px;
+  position: absolute;
+  /* style */
+  text-align: center;
+  color: white;
+}
